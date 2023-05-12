@@ -4,7 +4,7 @@
 ![GitHub last commit](https://custom-icon-badges.demolab.com/github/last-commit/Nweekley84/nates-weather-app?logo=git-commit)
 # Nate's Weather App
 > Create a weather app using Json and API keys.
-> Must have search a function (Search by City Name).
+> Must have a search function (Search by City Name).
 > Must display array of last 10 City searches, and store them to local storage.
 > Must use openweathermap and get an API key from them.
 > Must also query openweathermap's forecast parameter.
