@@ -10,7 +10,6 @@ const currentDateEl = $('#currentDate');
 const currentTempEl = $("#temp");
 const currentHumidityEl = $("#humidity");
 const currentWindSpeedEl = $("#windSpeed");
-const currentUviEl = $("#uvIndex");
 
 const MAX_HISTORY_ITEMS = 10;
 let searchHistoryArray;
@@ -20,11 +19,12 @@ let lastSearchedCity;
 searchBtn.click(() => {
     let cityName = searchInputEl.val();
     handleSearch(cityName);
-    searchInputEl.val(''); // Clear search field
+    // Clear search field
+    searchInputEl.val(''); 
 });
 
 $(document).ready(() => {
-    // Get search history from storage
+    // Get search history from local storage
     searchHistoryArray = JSON.parse(localStorage.getItem('searchHistory')) || [];
     lastSearchedCity = searchHistoryArray[0];
     updateSearchHistory();
@@ -54,8 +54,9 @@ function handleSearch(cityName) {
 };
 
 function updateSearchHistory() {
+    // If array returns more than 10 results, "pop" or remove extra results
     if (searchHistoryArray.length > MAX_HISTORY_ITEMS) {
-        searchHistoryArray.pop(); // If array returns more than 10 results, "pop" or remove extra results
+        searchHistoryArray.pop(); 
     };
     localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArray));
 
@@ -71,7 +72,7 @@ function updateSearchHistory() {
 };
 
 function getCurrentWeather(cityName) {
-    const queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&appid=d805afa702cbd0d0da430b05b58308fc`
+    const queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&appid=789daea6cb44d58acb689fa6d21a550a`
     $.ajax({
         url: queryURL,
         method: 'GET'
@@ -83,6 +84,7 @@ function getCurrentWeather(cityName) {
         const windSpeed = response.wind.speed;
         const lat = response.coord.lat;
         const lon = response.coord.lon;
+        console.log(lat, lon);
 
         currentCityEl.text(city);
         currentIconEl.html(icon);
@@ -90,12 +92,12 @@ function getCurrentWeather(cityName) {
         currentTempEl.text(temp);
         currentHumidityEl.text(humidity);
         currentWindSpeedEl.text(windSpeed);
-        getUVIndex(lat, lon);
+        getcityName(lat, lon);
     });
 };
 
 function getForecastWeather(cityName) {
-    const queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&cnt=5&units=imperial&appid=d805afa702cbd0d0da430b05b58308fc`;
+    const queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&cnt=5&units=imperial&appid=789daea6cb44d58acb689fa6d21a550a`;
     $.ajax({
         url: queryURL,
         method: 'GET'
@@ -107,15 +109,17 @@ function getForecastWeather(cityName) {
             const date = today.add(i + 1, 'day').format('M/DD');
             const temp = daysArray[i].main.temp;
             const humidity = daysArray[i].main.humidity;
+            const windSpeed = daysArray[i].wind.speed;
             // create elements to append
             const dateEl = $("<h5>").text(date);
             const iconEl = getIconElement(daysArray[i].weather[0].icon);
             const tempEl = $("<p>").html(`Temp: ${temp}&deg;F`)
             const humidityEl = $("<p>").html(`Humidity: ${humidity}%`)
-            // clear card content
+            const windSpeedEl = $("<p>").html(`Wind: ${windSpeed} mph`)
+            // clear the card content
             $(`#day-${i + 1}`).html('');
-            // append elements to card
-            $(`#day-${i + 1}`).append(dateEl).append(iconEl).append(tempEl).append(humidityEl)
+            // adds or appends the elements to the card
+            $(`#day-${i + 1}`).append(dateEl).append(iconEl).append(tempEl).append(humidityEl).append(windSpeedEl)
         };
     });
 };
@@ -125,25 +129,13 @@ function getIconElement(code) {
     return `<img src="${iconUrl}" style="width:100px">`
 };
 
-function getUVIndex(lat, lon) {
-    const queryURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=d805afa702cbd0d0da430b05b58308fc`;
+// Convert cityName to lat/lon using reverse geocoding API?
+function getcityName(lat, lon) {
+    const queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=789daea6cb44d58acb689fa6d21a550a`;
     $.ajax({
         url: queryURL,
         method: 'GET'
     }).then((response) => {
-        const uvi = response.value;
-        currentUviEl.text(uvi);
-        colorUVIndex(uvi);
+        const weather = response.value;
     });
-};
-
-function colorUVIndex(value) {
-    // Values based on EPA UV Index scale
-    if (value < 3) {
-        currentUviEl.attr('class', 'btn btn-sm btn-success')
-    } else if (value < 7) {
-        currentUviEl.attr('class', 'btn btn-sm btn-warning')
-    } else {
-        currentUviEl.attr('class', 'btn btn-sm btn-danger')
-    };
 };
