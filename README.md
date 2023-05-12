@@ -9,7 +9,7 @@
 > Must use openweathermap and get an API key from them.
 > Must also query openweathermap's forecast parameter.
 > Display a future 5 day forcast for current selected city.
-> Include Tempurate, Humidity and Wind.
+> Include Tempurature, Humidity and Wind.
 > Use icons from openweathermap.
 > Live demo: [![Here](https://custom-icon-badges.demolab.com/badge/Here-blue?logo=link)](https://nweekley84.github.io/nates-weather-app/)
 
