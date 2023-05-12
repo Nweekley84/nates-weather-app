@@ -53,7 +53,7 @@
 
 ---
 ## Usage
-To display a user searched citys' current weather as well as a 5-day forcast.
+To display a users searched citys' current weather as well as a 5-day forcast.
 
 ---
 ## Project Status
